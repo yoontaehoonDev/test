@@ -31,15 +31,25 @@ public class HelloController {
 
   @GetMapping("hello-api")
   @ResponseBody
-  public Hello helloApi(@RequestParam("name") String name) {
+  public Hello helloApi(@RequestParam("name") String name, @RequestParam("number") int number) {
     Hello hello = new Hello();
     hello.setName(name);
+    hello.setNumber(number);
 
     return hello;
   }
 
   static class Hello {
+    private int number;
     private String name;
+
+    public void setNumber(int number) {
+      this.number = number;
+    }
+
+    public int getNumber() {
+      return number;
+    }
 
     public String getName() {
       return name;
