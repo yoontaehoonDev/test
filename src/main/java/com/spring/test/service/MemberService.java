@@ -5,11 +5,12 @@ import com.spring.test.repository.MemberRepository;
 import com.spring.test.repository.MemoryMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Transactional
 public class MemberService {
 
   private final MemberRepository memberRepository;
@@ -20,12 +21,18 @@ public class MemberService {
   }
 
   public Long join(Member member) {
+    long start = System.currentTimeMillis();
+    try {
+      validateDuplicateMember(member);
 
-
-    validateDuplicateMember(member);
-
-    memberRepository.save(member);
-    return member.getId();
+      memberRepository.save(member);
+      return member.getId();
+    }
+    finally {
+      long finish = System.currentTimeMillis();
+      long timeMs = finish - start;
+      System.out.printf("join = %d ms\n", timeMs);
+    }
   }
 
   private void validateDuplicateMember(Member member) {
@@ -34,8 +41,16 @@ public class MemberService {
   }
 
    public List<Member> findMembers() {
-    return memberRepository.findAll();
-   }
+     long start = System.currentTimeMillis();
+     try {
+       return memberRepository.findAll();
+     }
+     finally {
+       long finish = System.currentTimeMillis();
+       long timeMs = finish - start;
+       System.out.printf("join = %d ms\n", timeMs);
+     }
+     }
 
    public Optional<Member> findOne(Long memberId) {
     return memberRepository.findById(memberId);
